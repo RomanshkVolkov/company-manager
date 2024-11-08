@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+legend,
+button {
+  font-family: var(--font-quicksand), sans-serif;
+  font-weight: 500 !important;
+}
+
+path,
+circle,
+ellipse,
+line,
+polygon,
+polyline,
+rect {
+  stroke-width: inherit;
+}
