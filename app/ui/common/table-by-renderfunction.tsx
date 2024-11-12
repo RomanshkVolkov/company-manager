@@ -32,13 +32,12 @@ export default function TableByRenderFunction<
   renderFunction,
 }: TableProps<DataSource & { id: string | number }> & {
   renderFunction: (
-    item: DataSource,
-    columnKey: PickDataSource
+    _item: DataSource,
+    _columnKey: PickDataSource
   ) => React.ReactNode;
 }) {
   const enableSearchFilter = Boolean(filters?.search);
   const enableDateFilter = Boolean(filters?.date);
-  const commonKeys = ['createdAt', 'updatedAt'];
 
   const searchFilter = (
     <div className="col-span-2 grid gap-2 md:flex md:justify-between">
@@ -49,9 +48,9 @@ export default function TableByRenderFunction<
     </div>
   );
 
-  const pagination = <Pagination totalPages={totalPages} />;
+  const pagination = <Pagination totalPages={totalPages ?? 1} />;
 
-  const renderCell = useCallback(renderFunction, []);
+  const renderCell = useCallback(renderFunction, [renderFunction]);
 
   return (
     <div className="w-full">

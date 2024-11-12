@@ -1,7 +1,7 @@
 'use client';
 
 // framework
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 // libs
 import {
@@ -11,7 +11,6 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  Tooltip,
 } from '@nextui-org/react';
 
 // types and utils
@@ -23,6 +22,7 @@ import Pagination from '@/app/ui/common/pagination';
 import DateFilter from '@/app/ui/common/date-filter';
 import {
   normalizeDate,
+  searchByText,
   serializedPageData,
   serializedPathname,
 } from '@/app/lib/utils';
@@ -35,18 +35,32 @@ export default function DinamicTable<
 >({
   columns,
   data,
-  totalPages,
   cellActions,
   filters,
   limitRecordsPerPage = 15,
 }: TableProps<DataSource & { id: string | number }>) {
   const searchParams = useSearchParams();
   const search = searchParams.get('search') || '';
-  const page = searchParams.get('page') || '1';
+  const page = searchParams.get('page') ?? '1';
+
+  const [dataFiltered, setDataFiltered] =
+    React.useState<(DataSource & { id: number | string })[]>(data);
+
+  useEffect(() => {
+    if (search) {
+      const newData = searchByText(data, search);
+      setDataFiltered(newData);
+    }
+  }, [data, search]);
+
+  const pages = useCallback(
+    () => Math.ceil(dataFiltered.length / limitRecordsPerPage),
+    [dataFiltered, limitRecordsPerPage]
+  );
 
   const enableSearchFilter = Boolean(filters?.search);
   const enableDateFilter = Boolean(filters?.date);
-  const commonKeys = ['createdAt', 'updatedAt'];
+  const commonKeys = React.useMemo(() => ['createdAt', 'updatedAt'], []);
 
   const searchFilter = (
     <div className="col-span-2 grid gap-2 md:flex md:justify-between">
@@ -57,7 +71,7 @@ export default function DinamicTable<
     </div>
   );
 
-  const pagination = <Pagination totalPages={totalPages} />;
+  const pagination = <Pagination totalPages={pages()} />;
 
   const commonRenderFunction = (
     item: DataSource,
@@ -86,15 +100,24 @@ export default function DinamicTable<
     return String(value);
   };
 
-  const renderCell = useCallback(commonRenderFunction, []);
+  const renderCell = useCallback(commonRenderFunction, [
+    cellActions?.deletePath,
+    cellActions?.editPath,
+    commonKeys,
+  ]);
 
   const handlePaginatedData = () =>
     serializedPageData<DataSource & { id: string | number }>(
-      data,
+      dataFiltered,
       +(page ?? '0'),
       limitRecordsPerPage
     );
-  const tableData = useCallback(handlePaginatedData, [data, page]);
+
+  const tableData = useCallback(handlePaginatedData, [
+    dataFiltered,
+    page,
+    limitRecordsPerPage,
+  ]);
 
   return (
     <div className="w-full">

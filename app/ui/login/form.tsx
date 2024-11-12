@@ -10,7 +10,6 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 import { authenticate } from '@/app/lib/actions/auth.actions';
-import { useFormStatus } from 'react-dom';
 
 export default function Form() {
   const [state, dispatch, isPending] = useActionState(authenticate, undefined);
@@ -21,11 +20,12 @@ export default function Form() {
   return (
     <form action={dispatch}>
       <Input
+        id="username"
         data-testid="username-field"
         label="Usuario"
-        type="text"
         name="username"
-        id="username"
+        type="text"
+        disabled={isPending}
         className="mb-4"
         isClearable
         isRequired
@@ -36,6 +36,7 @@ export default function Form() {
         label="Contraseña"
         id="password"
         minLength={6}
+        disabled={isPending}
         className="mb-2"
         type={isVisible ? 'text' : 'password'}
         isRequired
@@ -67,7 +68,7 @@ export default function Form() {
           </span>
         </Link>
       </div>
-      <LoginButton />
+      <LoginButton pending={isPending} />
       <div className="mt-2 flex gap-1" aria-live="polite" aria-atomic="true">
         {state && (
           <>
@@ -80,8 +81,7 @@ export default function Form() {
   );
 }
 
-function LoginButton() {
-  const { pending } = useFormStatus();
+function LoginButton({ pending }: { pending: boolean }) {
   return (
     <Button
       data-testid="submit-button"

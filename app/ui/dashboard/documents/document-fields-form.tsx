@@ -1,18 +1,28 @@
 'use client';
 
-import { TableColumns } from '@/app/types/types';
-import TableByRenderFunction from '../../common/table-by-renderfunction';
-import { DocumentFields } from '@/app/types/forms';
-import { Button, Input } from '@nextui-org/react';
+// framework
 import { useContext } from 'react';
-import { DocumentFieldsContext } from '@/app/context/document-fields';
-import InputSelect from '../../common/input-select';
-import { DATABASE_TYPES } from '@/app/lib/consts';
+import { useRouter } from 'next/navigation';
+
+// libs
+import { Button, Input } from '@nextui-org/react';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+
+// types and utils
+import { DATABASE_TYPES, site } from '@/app/lib/consts';
+import { DocumentFields } from '@/app/types/forms';
+import { TableColumns } from '@/app/types/types';
+
+// components
+import TableByRenderFunction from '@/app/ui/common/table-by-renderfunction';
+import { DocumentFieldsContext } from '@/app/context/document-fields';
+import InputSelect from '@/app/ui/common/input-select';
+import { serializedPathname } from '@/app/lib/utils';
 
 type PickDataSource = 'field' | 'typeField' | 'documentKey' | 'delete';
 export default function DocumentFieldsForm() {
   const { fields, setFields } = useContext(DocumentFieldsContext);
+  const { push } = useRouter();
 
   const handleChangueValue = (
     key: PickDataSource,
@@ -30,22 +40,28 @@ export default function DocumentFieldsForm() {
   };
 
   const createField = () => {
-    setFields((prev) => {
-      const length = prev.length;
-      return [
-        ...prev,
-        {
-          id: length * 5000 + 1,
-          field: '',
-          typeField: '',
-          documentKey: '',
-        },
-      ];
-    });
+    setFields((prev) => [
+      ...prev,
+      {
+        id: -(prev.length + 1),
+        field: '',
+        typeField: '',
+        documentKey: '',
+      },
+    ]);
   };
 
-  const deleteField = (id: number) => {
-    setFields((prev) => prev.filter((item) => item.id !== id));
+  const deleteField = (id: number, field: string) => {
+    if (id < 0) {
+      setFields((prev) => prev.filter((item) => item.id !== id));
+      return;
+    }
+    push(
+      serializedPathname(site.deleteDocumentField.path, {
+        id,
+        field,
+      })
+    );
   };
 
   const columns: TableColumns<PickDataSource>[] = [
@@ -64,6 +80,9 @@ export default function DocumentFieldsForm() {
             label="Columna"
             variant="underlined"
             defaultValue={item.field}
+            {...(item.id > 0 && { disabled: true })}
+            required
+            min={3}
             onChange={(e) =>
               handleChangueValue('field', e.target.value, item.id)
             }
@@ -79,6 +98,7 @@ export default function DocumentFieldsForm() {
             defaultValue={String(
               DATABASE_TYPES.find((type) => type.name === item.typeField)?.id
             )}
+            disabled={item.id > 0}
             onChange={(value) => {
               handleChangueValue('typeField', value.name, item.id);
             }}
@@ -91,6 +111,8 @@ export default function DocumentFieldsForm() {
             label="Clave del documento"
             variant="underlined"
             defaultValue={item.documentKey}
+            required
+            min={3}
             onChange={(e) =>
               handleChangueValue('documentKey', e.target.value, item.id)
             }
@@ -99,7 +121,7 @@ export default function DocumentFieldsForm() {
       case 'delete':
         return (
           <Button
-            onClick={() => deleteField(item.id)}
+            onClick={() => deleteField(item.id, item.field)}
             color="danger"
             isIconOnly
           >

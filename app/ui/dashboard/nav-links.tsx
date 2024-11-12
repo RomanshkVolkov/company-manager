@@ -1,16 +1,23 @@
 'use client';
 
-import { site } from '@/app/lib/consts';
-import { validateRole } from '@/app/lib/utils';
+// framework
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+
+// libs
+import clsx from 'clsx';
 import {
   HomeIcon,
   Cog6ToothIcon,
   DocumentCheckIcon,
   CircleStackIcon,
 } from '@heroicons/react/24/outline';
-import clsx from 'clsx';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+
+// types and utils
+import { site } from '@/app/lib/consts';
+import { validateRole } from '@/app/lib/utils';
+
+// components
 
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.

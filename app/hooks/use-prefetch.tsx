@@ -16,7 +16,7 @@ export default function usePrefetch(links: string[]) {
       prefetch(link);
     });
 
-  useEffect(runPrefetchLinks, []);
+  useEffect(runPrefetchLinks, [links, prefetch]);
 
   return null;
 }

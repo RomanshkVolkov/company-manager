@@ -1,6 +1,6 @@
 'use client';
 // framework
-import { useActionState, useState } from 'react';
+import { useActionState } from 'react';
 
 // libs
 import { Input } from '@nextui-org/react';
@@ -8,7 +8,6 @@ import { UserGroupIcon } from '@heroicons/react/24/outline';
 
 // types and utils
 import { ActionState } from '@/app/types/types';
-import { site } from '@/app/lib/consts';
 
 // components
 import Fields from '@/app/ui/common/fields';
@@ -24,8 +23,8 @@ export default function SimpleCatalogForm<T extends FormErrors>({
   serverAction,
 }: {
   serverAction: (
-    state: ActionState<T>,
-    formData: FormData
+    _state: ActionState<T>,
+    _formData: FormData
   ) => ActionState<T> | Promise<ActionState<T>>;
 }) {
   const initialState: ActionState<T> = {
@@ -40,7 +39,6 @@ export default function SimpleCatalogForm<T extends FormErrors>({
       dispatch={dispatch}
       hrefCancelled="back()"
       message={state?.message}
-      isTransparent={true}
     >
       <FormGroup title="Información del usuario" icon={UserGroupIcon}>
         <Fields>

@@ -66,7 +66,7 @@ export const site: SitePaths = {
   },
   editProfile: {
     name: 'Editar perfil',
-    path: '/dashboard/settings/edit-profile/:id',
+    path: '/dashboard/settings/general/profiles/:id/edit',
   },
   createKitchen: {
     name: 'Crear cocina',
@@ -108,9 +108,13 @@ export const site: SitePaths = {
     name: 'Editar documento',
     path: '/dashboard/settings/documents/:id/edit',
   },
+  deleteDocumentField: {
+    name: 'Eliminar campo de documento',
+    path: '/dashboard/settings/documents/delete-field/:id?field=:field',
+  },
   deleteDocument: {
     name: 'Eliminar documento',
-    path: '/dashboard/settings/documents/:id/delete',
+    path: '/dashboard/settings/documents/delete-item/:id?name=:name',
   },
   data: { name: 'Datos', path: '/dashboard/data' },
   dataTable: { name: 'Tabla', path: '/dashboard/data/table/:id' },
@@ -123,32 +127,4 @@ export const site: SitePaths = {
     name: 'Cambiar contraseña',
     path: '/dashboard/change-password',
   },
-  // settings: {
-  //   modals: {
-  //     createProfile: '/dashboard/settings/create-profile',
-  //     editProfile: (id: PageIDParam) =>
-  //       `/dashboard/settings/edit-profile/${id}`,
-  //     createKitchen: '/dashboard/settings/create-kitchen',
-  //     createShift: '/dashboard/settings/create-shift',
-  //     editKitchen: '/dashboard/settings/edit-kitchen/:id',
-  //     editShift: '/dashboard/settings/edit-shift/:id',
-  //     actionRemove: (slugAction: string) =>
-  //       `/dashboard/settings/action-remove/${slugAction}/:id?name=:name`,
-  //   },
-  //   general: '/dashboard/settings/general',
-  //   users: '/dashboard/settings/users',
-  //   shifts: '/dashboard/settings/shifts',
-  //   kitchens: '/dashboard/settings/kitchens',
-  // },
-  // documents: {
-  //   init: '/dashboard/settings/documents',
-  //   create: '/dashboard/settings/documents/create',
-  //   editDocument: '/dashboard/settings/documents/:id/edit',
-  //   deleteDocument: '/dashboard/settings/documents/:id/delete',
-  // },
-  // datax: {
-  //   init: '/dashboard/data',
-  //   table: '/dashboard/data/table/:id',
-  //   uploadDocument: '/dashboard/data/upload-document?documentID=:documentID',
-  // },
 };

@@ -6,17 +6,12 @@ import Form from 'next/form';
 
 export default function FormComponent({
   children,
-  isTransparent,
   action,
   ...props
 }: {
   children: React.ReactNode;
-  isTransparent?: boolean;
-  action?: string | ((payload: any) => void);
+  action?: string | ((_payload: any) => void);
 } & React.HTMLProps<HTMLFormElement>) {
-  const classes = isTransparent
-    ? 'bg-transparent'
-    : 'bg-white border dark:bg-black dark:shadow-black dark:border-none';
   return (
     <Form
       action={action as any}

@@ -8,6 +8,7 @@ export type DocumentFields = {
   documentKey: string;
 };
 export type DocumentStrings = 'name' | 'table';
+export type EditabledocumentStrings = 'name';
 export type CreateDocument = Record<DocumentStrings, string> & {
   fields: DocumentFields[];
 };
@@ -16,6 +17,7 @@ export type EditableDocument = Record<DocumentStrings, string> & {
   fields: DocumentFields[];
 };
 export type EditableDocumentWithFields = Record<DocumentStrings, string> & {
+  id: number;
   fields: DocumentFields[];
 };
 

@@ -2,28 +2,19 @@ export const dynamic = 'force-dynamic';
 
 /* eslint-disable quotes */
 import { auth } from '@/auth';
-import { getTerminalsByUser } from '../lib/services/user.service';
-
-import DashboardHighlights from '../ui/dashboard/home/highlights';
-import TableWrapper from '../ui/dashboard/home/table-wrapper';
 
 interface Props {
-  searchParams?: {
-    from?: string;
-    to?: string;
-    client?: string;
-    terminal?: string;
+  _searchParams?: {
+    [key: string]: string;
   };
 }
 
-export default async function Dashboard({ searchParams }: Props) {
+export default async function Dashboard({ _searchParams }: Props) {
   const session = await auth();
 
   if (!session) {
     return null;
   }
-
-  const { user } = session;
 
   return (
     <main className="">

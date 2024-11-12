@@ -292,24 +292,42 @@ export const validatedRequest = <T>(data: APIResponse<T>, defaultValue: T) => {
   return data;
 };
 
+// filters and paginated data
+const paginatedFunction = (data: any[], page: number, limit: number) =>
+  data.slice((page - 1) * limit, page * limit);
+
+export const searchByText = (data: any[], search: string) => {
+  const txt = search.toLowerCase();
+
+  return data.filter((item) => {
+    const values = Object.values(item);
+    return values.some((value) => {
+      const txtValue = String(value).toLowerCase();
+      return txtValue.includes(txt);
+    });
+  });
+};
+
 export const serializedPageData = <T>(
   data: T[],
   page: number,
   limit: number
 ) => {
   if (Array.isArray(data)) {
-    return data.slice((page - 1) * limit, page * limit);
+    return paginatedFunction(data, page, limit);
   }
   return [];
 };
 
+// end filters and paginated data
+
 export const conditionalParse = <T, U>(
   value: T | undefined,
-  parseFn: (val: T) => U
+  parseFn: (_val: T) => U
 ): U | T => {
   try {
     return value !== undefined ? parseFn(value) : (value as U);
-  } catch (error) {
+  } catch {
     return value as U;
   }
 };
@@ -334,13 +352,13 @@ export const validatedSchema = (
   return { errors: null, data: validatedSchema.data };
 };
 
-export function serializedPathname(pathname: string, params: Object) {
+export function serializedPathname(pathname: string, params: any) {
   const keys = Object.keys(params);
   let serializedPath = pathname;
   keys.forEach((key) => {
     serializedPath = serializedPath.replace(
       `:${key}`,
-      String(params[key as keyof Object])
+      String(params[key as any])
     );
   });
   return serializedPath;

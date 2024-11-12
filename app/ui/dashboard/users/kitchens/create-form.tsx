@@ -1,13 +1,21 @@
 'use client';
-import useEndActionModalProcess from '@/app/hooks/use-end-action-modal-process';
-import { createKitchen } from '@/app/lib/actions/user.actions';
+
+// framework
+import { useActionState } from 'react';
+
+// libs
+import { ClockIcon } from '@heroicons/react/24/outline';
+import { Input } from '@nextui-org/react';
+
+// types and utils
 import { hasItems } from '@/app/lib/utils';
+import { createKitchen } from '@/app/lib/actions/user.actions';
+
+// components
 import Fields from '@/app/ui/common/fields';
 import FormGroup from '@/app/ui/common/form-group';
 import FormWrapper from '@/app/ui/common/form-wrapper';
-import { ClockIcon } from '@heroicons/react/24/outline';
-import { Input } from '@nextui-org/react';
-import { useActionState } from 'react';
+import useEndActionModalProcess from '@/app/hooks/use-end-action-modal-process';
 
 export default function Form() {
   const initialState = {
@@ -20,12 +28,15 @@ export default function Form() {
     createKitchen,
     initialState
   );
+
   useEndActionModalProcess({ signal: state?.finishedProcess });
+
   return (
     <FormWrapper
       dispatch={dispatch}
       message={state?.message}
       hrefCancelled={'back()'}
+      isPending={isPending}
     >
       <FormGroup title="Información de la cocina" icon={ClockIcon}>
         <Fields>
@@ -36,6 +47,7 @@ export default function Form() {
               label="Nombre"
               isInvalid={hasItems(state.errors.name)}
               errorMessage={state.errors?.name}
+              disabled={isPending}
             />
           </div>
         </Fields>

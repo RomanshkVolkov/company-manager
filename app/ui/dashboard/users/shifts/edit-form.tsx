@@ -28,8 +28,8 @@ export default function EditForm<T extends Errors>({
   const { back } = useRouter();
 
   const bindAction = editShiftAction.bind(null, id) as (
-    prev: any,
-    formData: FormData
+    _prev: any,
+    _formData: FormData
   ) => Promise<ActionState<T>>;
 
   const initialState: ActionState<T> = {
@@ -45,14 +45,13 @@ export default function EditForm<T extends Errors>({
     }
   };
 
-  useEffect(handleFinishedProcess, [state]);
+  useEffect(handleFinishedProcess, [state, back]);
 
   return (
     <FormWrapper
       dispatch={dispatch}
       hrefCancelled="back()"
       message={state?.message}
-      isTransparent={true}
     >
       <FormGroup title="Información de la cocina" icon={ClockIcon}>
         <Fields>

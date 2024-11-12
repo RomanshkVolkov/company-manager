@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 
 type DeleteAction = () => Promise<
   | {
-      errors: {};
+      errors: Record<string, string[]>;
       message: string;
     }
   | undefined

@@ -1,7 +1,7 @@
-import { DEFAULT_PAGINATION_LIMIT } from '@/app/lib/consts';
 import { TableColumns } from '@/app/types/types';
-import { getProfiles } from '@/app/lib/services/user.service';
+import { getProfiles } from '@/app/lib/actions/user.actions';
 import DinamicTable from '@/app/ui/common/table';
+import { site } from '@/app/lib/consts';
 
 export type PickDataSource = 'id' | 'name' | 'createdAt' | 'updatedAt';
 
@@ -13,15 +13,14 @@ export type DataSource = {
 };
 
 export default async function TableWrapper({
-  query,
-  page,
+  _query,
+  _page,
 }: {
-  query?: string;
-  page: number;
+  _query?: string;
+  _page: number;
   date?: { from?: string; to?: string };
 }) {
   const { data } = await getProfiles();
-  const totalPages = Math.ceil((data.length || 1) / DEFAULT_PAGINATION_LIMIT);
 
   const columns: TableColumns<PickDataSource | 'actions'>[] = [
     { uid: 'name', name: 'Nombre' },
@@ -35,9 +34,8 @@ export default async function TableWrapper({
       <DinamicTable
         columns={columns}
         data={data}
-        totalPages={totalPages}
         cellActions={{
-          editPath: '#',
+          editPath: site.editProfile.path,
           deletePath: '#',
         }}
       />

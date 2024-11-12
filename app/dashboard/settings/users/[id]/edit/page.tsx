@@ -4,10 +4,9 @@ import {
   getProfiles,
   getShifts,
   getUserByID,
-} from '@/app/lib/services/user.service';
+} from '@/app/lib/actions/user.actions';
 import MainWrapper from '@/app/ui/common/main-wrapper';
 import Form from '@/app/ui/dashboard/users/edit-form';
-import { auth } from '@/auth';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -35,7 +34,7 @@ export default async function EditUser({
     <MainWrapper
       title="Editar usuario"
       breadcrumbList={[
-        { label: 'Usuarios', href: site.settings.users },
+        { label: 'Usuarios', href: site.usersSettings.path },
         { label: 'Editar', href: '#', active: true },
       ]}
     >

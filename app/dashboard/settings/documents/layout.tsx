@@ -1,6 +1,4 @@
-import { site } from '@/app/lib/consts';
 import TableSkeleton from '@/app/ui/common/table-skeleton';
-import GenericTabs from '@/app/ui/dashboard/generic-tabs';
 import { Suspense } from 'react';
 
 export default function Layout({

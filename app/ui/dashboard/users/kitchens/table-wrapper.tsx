@@ -1,6 +1,6 @@
-import { DEFAULT_PAGINATION_LIMIT, site } from '@/app/lib/consts';
+import { site } from '@/app/lib/consts';
 import { TableColumns } from '@/app/types/types';
-import { getKitchens } from '@/app/lib/services/user.service';
+import { getKitchens } from '@/app/lib/actions/user.actions';
 import DinamicTable from '@/app/ui/common/table';
 import { serializedPathname } from '@/app/lib/utils';
 
@@ -14,15 +14,14 @@ export type DataSource = {
 };
 
 export default async function TableWrapper({
-  query,
-  page,
+  _query,
+  _page,
 }: {
-  query?: string;
-  page: number;
+  _query?: string;
+  _page: number;
   date?: { from?: string; to?: string };
 }) {
   const { data } = await getKitchens();
-  const totalPages = Math.ceil((data.length || 1) / DEFAULT_PAGINATION_LIMIT);
 
   const columns: TableColumns<PickDataSource | 'actions'>[] = [
     { uid: 'name', name: 'Nombre' },
@@ -36,7 +35,6 @@ export default async function TableWrapper({
       <DinamicTable
         columns={columns}
         data={data as any as DataSource[]}
-        totalPages={totalPages}
         cellActions={{
           editPath: site.setKitchen.path,
           deletePath: serializedPathname(site.settingsActionRemove.path, {

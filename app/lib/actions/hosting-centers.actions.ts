@@ -3,18 +3,16 @@
 // libs
 
 // types and utils
-import { auth } from '@/auth';
-import { apiRequest } from '../server-functions';
-import { validatedRequest } from '../utils';
-import { editAction } from './generic.actions';
-import { site } from '../consts';
 import { ActionState } from '@/app/types/types';
 import { HostingCenterUpdatedErrors } from '@/app/types/dashboard';
+import { apiRequest } from '../server-functions';
+import { editAction } from './generic.actions';
+import { site } from '../consts';
+import { validatedRequest } from '../utils';
 
 // components
 
 export async function getCurrentHostingCenter() {
-  const session = await auth();
   const response = await apiRequest('/hosting-center/current', 'GET', true);
 
   return validatedRequest(response, {});
@@ -32,7 +30,7 @@ export async function updateHostingCenter<T extends HostingCenterUpdatedErrors>(
   return (await editAction(
     pathname,
     errorMessage,
-    site.settings.general,
+    site.generalSettings.path,
     {
       id,
       name: data.name,

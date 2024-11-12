@@ -13,19 +13,7 @@ export const metadata: Metadata = {
   title: 'Usuarios',
 };
 
-export default function Users({
-  params,
-}: {
-  params: {
-    query?: string;
-    page?: string;
-    from?: string;
-    to?: string;
-  };
-}) {
-  const page = params?.page ? +params.page : 1;
-  const { from, to } = params;
-
+export default function Users() {
   return (
     <MainWrapper
       title="Usuarios"
@@ -34,7 +22,7 @@ export default function Users({
         label: 'Crear usuario',
       }}
     >
-      <TableWrapper query={params?.query} page={page} date={{ from, to }} />
+      <TableWrapper />
     </MainWrapper>
   );
 }

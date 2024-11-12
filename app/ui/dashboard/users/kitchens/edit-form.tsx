@@ -29,8 +29,8 @@ export default function EditForm<T extends Errors>({
   const { back } = useRouter();
 
   const bindAction = editKitchenAction.bind(null, id) as (
-    prev: any,
-    formData: FormData
+    _prev: any,
+    _formData: FormData
   ) => Promise<ActionState<T>>;
 
   const initialState = {
@@ -39,20 +39,20 @@ export default function EditForm<T extends Errors>({
     finishedProcess: false,
   };
 
-  const [state, dispatch] = useActionState(bindAction, initialState);
+  const [state, dispatch, isPending] = useActionState(bindAction, initialState);
   const handleFinishedProcess = () => {
     if (state?.finishedProcess) {
       back();
     }
   };
 
-  useEffect(handleFinishedProcess, [state]);
+  useEffect(handleFinishedProcess, [state, back]);
   return (
     <FormWrapper
       dispatch={dispatch}
       hrefCancelled="back()"
       message={state?.message}
-      isTransparent={true}
+      isPending={isPending}
     >
       <FormGroup title="Información de la cocina" icon={BuildingStorefrontIcon}>
         <Fields>

@@ -1,8 +1,8 @@
 'use client';
 
 // framework
-import { useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 // libs
 import {
@@ -27,18 +27,16 @@ export default function CustomModal({
   children: React.ReactNode;
   closeButton?: 'show' | 'hide';
 }) {
-  const pathname = usePathname();
   const { back } = useRouter();
 
-  const handleCloseModal = () => {
-    back();
-  };
-
-  const onKeyClose = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      handleCloseModal();
-    }
-  };
+  const onKeyClose = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        back();
+      }
+    },
+    [back]
+  );
 
   const loadAddCloseEvent = () => {
     const body = document.querySelector('body');
@@ -50,7 +48,7 @@ export default function CustomModal({
     };
   };
 
-  useEffect(loadAddCloseEvent, []);
+  useEffect(loadAddCloseEvent, [onKeyClose, back]);
   const { onOpenChange } = useDisclosure();
 
   return (
@@ -58,7 +56,7 @@ export default function CustomModal({
       <Modal
         className="max-w-[720px] p-2 md:p-4"
         onOpenChange={onOpenChange}
-        onClose={handleCloseModal}
+        onClose={back}
         isOpen
       >
         <ModalContent>

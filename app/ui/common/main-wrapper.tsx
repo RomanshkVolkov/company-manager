@@ -25,9 +25,7 @@ export default function MainWrapper({
   breadcrumbList?: Breadcrumb[];
   linksToPrefetch?: string[];
 }) {
-  if (linksToPrefetch && linksToPrefetch?.length > 0) {
-    usePrefetch(linksToPrefetch);
-  }
+  usePrefetch(linksToPrefetch ?? []);
 
   return (
     <main>

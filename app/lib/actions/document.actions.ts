@@ -8,13 +8,12 @@ import { read, utils } from 'xlsx';
 // types and utils
 import { apiRequest } from '@/app/lib/server-functions';
 import { serializedPathname, validatedRequest } from '@/app/lib/utils';
-import { createAction } from './generic.actions';
+import { createAction, deleteAction, editAction } from './generic.actions';
 import { site } from '../consts';
 import {
-  CreateDocument,
   DocumentFields,
   DocumentStrings,
-  EditableDocumentWithFields,
+  EditabledocumentStrings,
   TableByID,
 } from '@/app/types/forms';
 import { CommonFields } from '@/app/types/types';
@@ -42,6 +41,7 @@ export async function createDocument(
   const data = Object.fromEntries(formData);
 
   const fieldsMapped = fields.map((field) => {
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     const { id, ...rest } = field;
     return rest;
   });
@@ -63,13 +63,60 @@ export async function createDocument(
   );
 }
 
+export async function updateDocument(
+  id: number,
+  fields: DocumentFields[],
+  prevState: any,
+  formData: FormData
+) {
+  const data = Object.fromEntries(formData);
+
+  const fieldsMapped = fields.map((field) => {
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+    const { id, ...rest } = field;
+    if (id > 0) {
+      return { ...rest, id };
+    }
+    return rest;
+  });
+
+  const body = {
+    id,
+    name: data.name,
+    fields: fieldsMapped,
+  };
+
+  return await editAction<Record<EditabledocumentStrings, string[]>>(
+    `/documents/${id}`,
+    `Error al actualizar el documento${data.name}`,
+    serializedPathname(site.setDocument.path, { id }),
+    body,
+    null,
+    true
+  );
+}
+
+export async function deleteFieldDocument(id: number) {
+  return await deleteAction(
+    `/documents/fields/${id}`,
+    'Error al eliminar el campo del documento',
+    serializedPathname(site.setDocument.path, { id })
+  );
+}
+
+export async function deleteDocument(id: number) {
+  return await deleteAction(
+    `/documents/${id}`,
+    'Error al eliminar el documento',
+    site.documentsSettings.path
+  );
+}
+
 export async function uploadDocument(
   id: number,
   prevData: any,
   formData: FormData
 ) {
-  const data = Object.fromEntries(formData);
-
   const file = formData.get('file_input_excel') as File;
   const arrayBuffer = await file.arrayBuffer();
   const extractData = new Uint8Array(arrayBuffer);
@@ -112,7 +159,8 @@ export async function uploadDocument(
     {
       documentID: id,
       file: JSON.stringify(body),
-    }
+    },
+    true
   );
 }
 

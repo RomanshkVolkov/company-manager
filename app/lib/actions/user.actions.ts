@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import {
+  conditionalParse,
   debugError,
   reportErrorToSentry,
   validatedRequest,
@@ -11,13 +12,74 @@ import {
 import { Errors } from '../schemas/user.schema';
 import { apiRequest } from '../server-functions';
 import { CatalogSchema } from '../schemas/catalog.schema';
-import { ActionState, Catalog } from '@/app/types/types';
+import { ActionState, Catalog, GormModel } from '@/app/types/types';
 import { site } from '../consts';
 import { deleteAction, editAction } from './generic.actions';
+import { EditableUser, Profile, UsersTable } from '@/app/types/user';
 
-export async function GetAllUsers() {
-  const response = await apiRequest('/users', 'GET', true, undefined, 1200);
+export async function getUsers() {
+  const response = await apiRequest<UsersTable[]>(
+    '/users',
+    'GET',
+    true,
+    undefined,
+    1200
+  );
 
+  return validatedRequest(response, []);
+}
+
+export async function getUserByID(id: string) {
+  try {
+    const response = await apiRequest<EditableUser>(
+      `/users/${id}`,
+      'GET',
+      true
+    );
+    response.data.profileID = conditionalParse(response.data.profileID, (n) =>
+      n.toString()
+    );
+    response.data.shiftID = conditionalParse(response.data.shiftID, (n) =>
+      n.toString()
+    );
+    response.data.kitchenIDs = conditionalParse(response.data.kitchenIDs, (k) =>
+      k.map((k) => k.toString())
+    );
+    return validatedRequest<EditableUser>(
+      response,
+      undefined as any as EditableUser
+    );
+  } catch (error) {
+    reportErrorToSentry(error, 'User Service');
+    throw new Error();
+  }
+}
+
+export async function getProfiles() {
+  const response = await apiRequest<(Catalog & GormModel)[]>(
+    '/users/profiles',
+    'GET',
+    true
+  );
+  return validatedRequest(response, []);
+}
+
+export async function getProfileByID(id: number) {
+  const response = await apiRequest<Profile>(
+    `/catalogs/profile/${id}`,
+    'GET',
+    true
+  );
+
+  return validatedRequest(response, { id: 0, name: '', permissions: [] });
+}
+
+export async function getShifts() {
+  const response = await apiRequest<(Catalog & GormModel)[]>(
+    '/users/shifts',
+    'GET',
+    true
+  );
   return validatedRequest(response, []);
 }
 
@@ -106,6 +168,12 @@ export async function deleteUser(id: number) {
   const pathname = `/users/${id}`;
   const errorMessage = 'Hubo un problema al eliminar el usuario';
   return await deleteAction(pathname, errorMessage, site.usersSettings.path);
+}
+
+export async function getKitchens() {
+  const response = await apiRequest<Catalog[]>('/users/kitchens', 'GET', true);
+
+  return validatedRequest(response, []);
 }
 
 export async function getKitchenByID(id: number) {

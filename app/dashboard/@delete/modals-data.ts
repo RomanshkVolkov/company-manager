@@ -13,11 +13,11 @@ type ModalInformation = {
   [key: string]: {
     title: string;
     message?: string;
-    action?: (id: number) => Promise<{
+    action?: (_id: number) => Promise<{
       message: string;
       errors: any;
     }>;
-    component?: (id: number) => React.ReactNode;
+    component?: (_id: number) => React.ReactNode;
   };
 };
 

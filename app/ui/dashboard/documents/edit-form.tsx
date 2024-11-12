@@ -10,11 +10,10 @@ import { Input } from '@nextui-org/react';
 // types and utils
 import { ActionState } from '@/app/types/types';
 import {
-  CreateDocument,
-  DocumentStrings,
+  EditabledocumentStrings,
   EditableDocumentWithFields,
 } from '@/app/types/forms';
-import { createDocument } from '@/app/lib/actions/document.actions';
+import { updateDocument } from '@/app/lib/actions/document.actions';
 import { hasItems } from '@/app/lib/utils';
 import { site } from '@/app/lib/consts';
 
@@ -24,14 +23,15 @@ import FormGroup from '@/app/ui/common/form-group';
 import Fields from '@/app/ui/common/fields';
 import DocumentFieldsForm from './document-fields-form';
 import { DocumentFieldsContext } from '@/app/context/document-fields';
+import useEndActionModalProcess from '@/app/hooks/use-end-action-modal-process';
 
 type Props = {
   document: EditableDocumentWithFields;
 };
 export default function Form({ document }: Props) {
-  const initialState: ActionState<Record<DocumentStrings, string[]>> = {
+  const initialState: ActionState<Record<EditabledocumentStrings, string[]>> = {
     message: '',
-    errors: {} as Record<DocumentStrings, string[]>,
+    errors: {} as Record<EditabledocumentStrings, string[]>,
     finishedProcess: false,
   };
 
@@ -39,10 +39,11 @@ export default function Form({ document }: Props) {
 
   useEffect(() => {
     setFields(document.fields);
-  }, []);
+  }, [setFields, document.fields]);
 
-  const bindAction = createDocument.bind(null, fields);
-  const [state, dispatch] = useActionState(createDocument, initialState);
+  const bindAction = updateDocument.bind(null, document.id, fields);
+  const [state, dispatch] = useActionState(bindAction, initialState);
+  useEndActionModalProcess({ signal: state?.finishedProcess });
 
   return (
     <FormWrapper
@@ -70,8 +71,6 @@ export default function Form({ document }: Props) {
               disabled
               description="Identificador único de la tabla en la base de datos"
               defaultValue={document.table as string}
-              isInvalid={hasItems(state.errors.table)}
-              errorMessage={state.errors?.table}
             />
           </div>
         </Fields>

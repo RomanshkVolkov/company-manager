@@ -3,13 +3,14 @@
 // libs
 
 // types and utils
-import { DEFAULT_PAGINATION_LIMIT, site } from '@/app/lib/consts';
+import { site } from '@/app/lib/consts';
 import { TableColumns } from '@/app/types/types';
-import { getShifts } from '@/app/lib/services/user.service';
+import { getShifts } from '@/app/lib/actions/user.actions';
 export type PickDataSource = 'id' | 'name' | 'updatedAt' | 'createdAt';
 
 // components
 import DinamicTable from '@/app/ui/common/table';
+import { serializedPathname } from '@/app/lib/utils';
 
 export type DataSource = {
   id: number;
@@ -18,16 +19,8 @@ export type DataSource = {
   createdAt: Date;
 };
 
-export default async function TableWrapper({
-  query,
-  page,
-}: {
-  query?: string;
-  page: number;
-  date?: { from?: string; to?: string };
-}) {
+export default async function TableWrapper() {
   const { data } = await getShifts();
-  const totalPages = Math.ceil((data.length || 1) / DEFAULT_PAGINATION_LIMIT);
 
   const columns: TableColumns<PickDataSource | 'actions'>[] = [
     { uid: 'name', name: 'Nombre' },
@@ -41,10 +34,11 @@ export default async function TableWrapper({
       <DinamicTable
         columns={columns}
         data={data}
-        totalPages={totalPages}
         cellActions={{
-          editPath: site.settings.modals.editShift,
-          deletePath: site.settings.modals.actionRemove('delete-shift'),
+          editPath: site.setShift.path,
+          deletePath: serializedPathname(site.settingsActionRemove.path, {
+            slugAction: 'delete-shift',
+          }),
         }}
       />
     </div>

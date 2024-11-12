@@ -1,6 +1,6 @@
 'use client';
 
-import { DEFAULT_PAGINATION_LIMIT, site } from '@/app/lib/consts';
+import { site } from '@/app/lib/consts';
 import { CommonFields, TableColumns } from '@/app/types/types';
 import TableByRenderFunction from '../../common/table-by-renderfunction';
 import { normalizeDate, serializedPathname } from '@/app/lib/utils';
@@ -11,17 +11,10 @@ export type PickDataSource = 'id' | 'name' | 'createdAt' | 'updatedAt';
 
 export type DataSource = Record<PickDataSource, string>;
 
-export default function TableWrapper({
-  query,
-  page,
-  data,
-}: {
-  query?: string;
-  page: number;
+type Props = {
   data: CommonFields[];
-}) {
-  const totalPages = Math.ceil((data.length || 1) / DEFAULT_PAGINATION_LIMIT);
-
+};
+export default function TableWrapper({ data }: Props) {
   const columns: TableColumns<PickDataSource | 'showReport'>[] = [
     { uid: 'name', name: 'Nombre del reporte' },
     { uid: 'updatedAt', name: 'Actualizado' },
@@ -57,7 +50,6 @@ export default function TableWrapper({
     <TableByRenderFunction
       columns={columns}
       data={data as any as DataSource[]}
-      totalPages={totalPages}
       renderFunction={renderFunction}
     />
   );

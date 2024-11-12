@@ -46,7 +46,7 @@ export type TableProps<T> = {
     align?: 'start' | 'end' | 'center' | undefined;
   }[];
   data: T[];
-  totalPages: number;
+  totalPages?: number;
   cellActions?: {
     editPath: string;
     deletePath: string;
@@ -115,6 +115,7 @@ type PathNamesStrings =
   | 'documentsSettings'
   | 'createDocument'
   | 'setDocument'
+  | 'deleteDocumentField'
   | 'deleteDocument'
   | 'data'
   | 'dataTable'

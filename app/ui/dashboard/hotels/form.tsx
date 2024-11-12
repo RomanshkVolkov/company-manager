@@ -23,7 +23,11 @@ export default function FormHotel<T extends HostingCenterUpdatedErrors>({
   const [state, dispatch] = useActionState(bindAction, initialState);
 
   return (
-    <FormWrapper dispatch={dispatch} hrefCancelled={site.generalSettings.path}>
+    <FormWrapper
+      dispatch={dispatch}
+      hrefCancelled={site.generalSettings.path}
+      message={state.message}
+    >
       <FormGroup title="Datos generales" icon={WrenchIcon}>
         <Fields>
           <div className="mb-4 md:mb-0 md:w-1/2">

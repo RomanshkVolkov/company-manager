@@ -3,7 +3,6 @@
 // libs
 
 // types and utils
-import { modalsData } from '@/app/dashboard/@delete/modals-data';
 import { getShiftByID } from '@/app/lib/actions/user.actions';
 
 // components

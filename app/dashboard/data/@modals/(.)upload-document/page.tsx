@@ -18,7 +18,7 @@ export default async function UploadDocument({ searchParams }: Props) {
 
   return (
     <CustomModal title="Cargar documento" closeButton="hide">
-      <UploadForm document={document.data} />
+      <UploadForm document={document} />
     </CustomModal>
   );
 }

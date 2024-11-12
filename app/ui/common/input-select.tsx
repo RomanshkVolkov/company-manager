@@ -11,6 +11,7 @@ export default function InputSelect({
   options,
   defaultValue,
   description,
+  disabled,
   multiple,
   onChange,
 }: {
@@ -20,8 +21,9 @@ export default function InputSelect({
   options: Catalog[];
   defaultValue?: string;
   description?: string;
+  disabled?: boolean;
   multiple?: boolean;
-  onChange?: (value: Catalog) => void;
+  onChange?: (_value: Catalog) => void;
 }) {
   return (
     <Select
@@ -30,6 +32,7 @@ export default function InputSelect({
       label={label}
       variant={variant}
       selectionMode={multiple ? 'multiple' : 'single'}
+      isDisabled={disabled}
       onChange={(e) => {
         if (onChange) {
           const { value } = e.target;

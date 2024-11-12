@@ -5,13 +5,10 @@ import DinamicTable from '@/app/ui/common/table';
 
 type Props = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ search?: string; page?: string }>;
 };
-export default async function Page({ params, searchParams }: Props) {
+export default async function Page({ params }: Props) {
   const { id } = await params;
-  const { search, page } = await searchParams;
   const { data } = await getDocumentTableById(+id);
-  const totalPages = Math.ceil((data.table.length || 1) / 10);
 
   const createLink = site.uploadDocument.path.replace(':documentID', id);
   const linksToPrefetch = [createLink];
@@ -30,11 +27,7 @@ export default async function Page({ params, searchParams }: Props) {
       linksToPrefetch={linksToPrefetch}
     >
       <div className="w-full">
-        <DinamicTable
-          columns={data.columns as any}
-          data={data.table}
-          totalPages={totalPages}
-        />
+        <DinamicTable columns={data.columns as any} data={data.table} />
       </div>
     </MainWrapper>
   );

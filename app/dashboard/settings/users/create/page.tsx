@@ -1,11 +1,10 @@
-import { site } from '@/app/lib/consts';
 import {
   getKitchens,
   getProfiles,
   getShifts,
-  getTerminals,
-} from '@/app/lib/services/user.service';
-import Breadcrumbs from '@/app/ui/common/breadcrumbs';
+} from '@/app/lib/actions/user.actions';
+import { site } from '@/app/lib/consts';
+
 import MainWrapper from '@/app/ui/common/main-wrapper';
 import Form from '@/app/ui/dashboard/users/create-form';
 import { auth } from '@/auth';
@@ -17,10 +16,14 @@ export const metadata: Metadata = {
 
 export default async function CreateUser() {
   const session = await auth();
-  if (!session) {
+  if (
+    !session ||
+    (session.user.profile.slug !== 'admin' &&
+      session.user.profile.slug !== 'root')
+  ) {
     return { redirect: { destination: '/login', permanent: false } };
   }
-  const token = session.user.token;
+
   const profiles = await getProfiles();
   const shifts = await getShifts();
   const kitchens = await getKitchens();

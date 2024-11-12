@@ -51,10 +51,11 @@ export async function createAction<T>(
       };
     }
 
-    if (!omitRedirect) {
-      if (postRequestPaths.revalidate)
-        revalidatePath(postRequestPaths.revalidate);
-      if (postRequestPaths.redirect) redirect(postRequestPaths.redirect);
+    if (postRequestPaths.revalidate) {
+      revalidatePath(postRequestPaths.revalidate);
+    }
+    if (postRequestPaths.redirect && !omitRedirect) {
+      redirect(postRequestPaths.redirect);
     }
 
     return {
@@ -84,7 +85,7 @@ export async function createAction<T>(
  * @returns
  */
 // generic updated action
-export async function editAction(
+export async function editAction<ErrorSchema>(
   pathname: string,
   errorMessage: string,
   revalidate: string,
@@ -115,14 +116,14 @@ export async function editAction(
 
     revalidatePath(revalidate);
     return {
-      errors: {},
+      errors: {} as ErrorSchema,
       message: '',
       finishedProcess: true,
     };
   } catch (error) {
     reportErrorToSentry(error, 'Generic Actions');
     return {
-      errors: {},
+      errors: {} as ErrorSchema,
       message: errorMessage,
     };
   }

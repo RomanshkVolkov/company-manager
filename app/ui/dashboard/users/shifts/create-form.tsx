@@ -34,7 +34,7 @@ export default function Form() {
       dispatch={dispatch}
       message={state?.message}
       hrefCancelled={'back()'}
-      isTransparent={true}
+      isPending={isPending}
     >
       <FormGroup title="Información del turno" icon={ClockIcon}>
         <Fields>

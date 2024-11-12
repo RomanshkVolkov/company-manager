@@ -1,10 +1,8 @@
 'use server';
 
-import bcrypt from 'bcrypt';
 import { AuthError } from 'next-auth';
-import { auth, signIn } from '@/auth';
+import { signIn } from '@/auth';
 import { z } from 'zod';
-import { getCurrentUTCTime } from '../utils';
 import { apiRequest } from '../server-functions';
 
 export async function authenticate(
@@ -111,13 +109,8 @@ export async function validateOTP(
   );
 
   if (!response?.success) {
-    const fieldMessage = {
-      otp: response?.schema.otp,
-    };
     return {
-      errors: {
-        otp: [fieldMessage.otp ?? ''],
-      },
+      errors: response.schema,
     };
   }
 
@@ -183,15 +176,8 @@ export async function resetPassword(
     );
 
     if (!response?.success) {
-      const fieldMessage = {
-        password: response?.schema.password,
-        confirmPassword: response?.schema.confirmPassword,
-      };
       return {
-        errors: {
-          password: [fieldMessage.password ?? ''],
-          confirmPassword: [fieldMessage.confirmPassword ?? ''],
-        },
+        errors: response.schema,
       };
     }
 
@@ -244,7 +230,6 @@ export async function changePassword(
   }
 
   const { currentPassword, password, passwordConfirm } = validatedData.data;
-  const session = await auth();
 
   if (password !== passwordConfirm) {
     return {
@@ -255,8 +240,7 @@ export async function changePassword(
     };
   }
   try {
-    const token = session?.user.token;
-    const response = await apiRequest('/auth/change-password', 'PUT', token, {
+    const response = await apiRequest('/auth/change-password', 'PUT', true, {
       currentPassword,
       password,
       confirmPassword: passwordConfirm,
