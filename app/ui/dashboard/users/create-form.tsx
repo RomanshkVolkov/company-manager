@@ -135,8 +135,8 @@ export default function CreateUserForm({
                   name="username"
                   label="Usuario"
                   required
-                  isInvalid={hasItems(state.errors?.email)}
-                  errorMessage={state.errors?.email?.join(', ')}
+                  isInvalid={hasItems(state.errors?.username)}
+                  errorMessage={state.errors?.username?.join(', ')}
                   description="Este campo te identificará en el sistema."
                 />
               </div>

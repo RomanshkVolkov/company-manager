@@ -11,11 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({
-  delete: deleteModal,
   auth,
   children,
 }: {
-  delete: React.ReactNode;
   auth: React.ReactNode;
   children: React.ReactNode;
 }) {
@@ -27,7 +25,6 @@ export default function Layout({
       <div className="relative flex-grow p-6 md:overflow-y-auto md:p-10 md:pl-5">
         {children}
       </div>
-      <div>{deleteModal}</div>
       <div>{auth}</div>
     </div>
   );

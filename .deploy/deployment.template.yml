@@ -1,0 +1,25 @@
+services:
+  STACK_PLACEHOLDER-app:
+    image: IMAGE_PLACEHOLDER
+    environment:
+      - PORT=3000
+      - NEXTAUTH_URL=https://devopsify.alexandergv2117.dev
+      - NEXTAUTH_SECRET=0ec4d956600492e5a0d138915644d100
+    networks:
+      - caddy
+    deploy:
+      replicas: 1
+      labels:
+        caddy: HOST_PLACEHOLDER
+        caddy.tls: "TLS_PLACEHOLDER"
+        caddy.tls.on_demand:
+        caddy.reverse_proxy: "{{upstreams 3000}}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc:/host/etc:ro
+
+networks:
+  caddy:
+    external: true

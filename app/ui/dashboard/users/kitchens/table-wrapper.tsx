@@ -1,7 +1,7 @@
 import { site } from '@/app/lib/consts';
 import { TableColumns } from '@/app/types/types';
 import { getKitchens } from '@/app/lib/actions/user.actions';
-import DinamicTable from '@/app/ui/common/table';
+import DynamicTable from '@/app/ui/common/table';
 import { serializedPathname } from '@/app/lib/utils';
 
 export type PickDataSource = 'id' | 'name' | 'updatedAt' | 'createdAt';
@@ -32,11 +32,11 @@ export default async function TableWrapper({
 
   return (
     <div className="w-full">
-      <DinamicTable
+      <DynamicTable
         columns={columns}
         data={data as any as DataSource[]}
         cellActions={{
-          editPath: site.setKitchen.path,
+          editPath: site.editKitchen.path,
           deletePath: serializedPathname(site.settingsActionRemove.path, {
             slugAction: 'delete-kitchen',
           }),

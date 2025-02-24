@@ -1,6 +1,6 @@
 import { TableColumns } from '@/app/types/types';
 import { getProfiles } from '@/app/lib/actions/user.actions';
-import DinamicTable from '@/app/ui/common/table';
+import DynamicTable from '@/app/ui/common/table';
 import { site } from '@/app/lib/consts';
 
 export type PickDataSource = 'id' | 'name' | 'createdAt' | 'updatedAt';
@@ -12,14 +12,7 @@ export type DataSource = {
   updatedAt: Date;
 };
 
-export default async function TableWrapper({
-  _query,
-  _page,
-}: {
-  _query?: string;
-  _page: number;
-  date?: { from?: string; to?: string };
-}) {
+export default async function TableWrapper() {
   const { data } = await getProfiles();
 
   const columns: TableColumns<PickDataSource | 'actions'>[] = [
@@ -31,12 +24,12 @@ export default async function TableWrapper({
 
   return (
     <div className="w-full">
-      <DinamicTable
+      <DynamicTable
         columns={columns}
         data={data}
         cellActions={{
           editPath: site.editProfile.path,
-          deletePath: '#',
+          deletePath: site.deleteProfile.path,
         }}
       />
     </div>

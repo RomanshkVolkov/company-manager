@@ -26,6 +26,14 @@ export const commonErrors = {
   },
 };
 
+type APIMethods = 'GET' | 'POST' | 'PUT' | 'DELETE';
+export const httpMethod: Record<APIMethods, APIMethods> = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+};
+
 export const DATABASE_TYPES = [
   {
     id: 1,
@@ -58,15 +66,37 @@ export const DATABASE_TYPES = [
 ];
 
 export const site: SitePaths = {
+  login: { name: 'Iniciar sesión', path: '/login', isPublic: true },
+  // dashboard
   home: { name: 'Dashboard', path: '/dashboard' },
-  login: { name: 'Iniciar sesión', path: '/login' },
+  // configuración - general
+  generalSettings: {
+    name: 'General',
+    path: '/dashboard/settings/general',
+  },
+  // acciones de la tabla de perfiles
   createProfile: {
     name: 'Crear perfil',
-    path: '/dashboard/settings/create-profile',
+    path: '/dashboard/settings/general/profiles/create',
   },
   editProfile: {
     name: 'Editar perfil',
     path: '/dashboard/settings/general/profiles/:id/edit',
+  },
+  deleteProfile: {
+    name: 'Eliminar perfil',
+    path: '/dashboard/settings/action-remove/profile/:id?name=:name',
+  },
+  // configuración - usuarios
+  usersSettings: { name: 'Usuarios', path: '/dashboard/settings/users' },
+  editUser: {
+    name: 'Editar usuario',
+    path: '/dashboard/settings/users/:id/edit',
+  },
+  // common route to action remove kitchen, shift, user, profile
+  settingsActionRemove: {
+    name: 'Eliminar',
+    path: '/dashboard/settings/action-remove/:slugAction/:id?name=:name',
   },
   createKitchen: {
     name: 'Crear cocina',
@@ -76,27 +106,16 @@ export const site: SitePaths = {
     name: 'Crear turno',
     path: '/dashboard/settings/create-shift',
   },
-  setKitchen: {
+  editKitchen: {
     name: 'Editar cocina',
     path: '/dashboard/settings/set-kitchen',
   },
-  setShift: { name: 'Editar turno', path: '/dashboard/settings/set-shift' },
-  settingsActionRemove: {
-    name: 'Eliminar',
-    path: '/dashboard/settings/action-remove/:slugAction/:id?name=:name',
-  },
-  generalSettings: {
-    name: 'General',
-    path: '/dashboard/settings/general',
-  },
-  usersSettings: { name: 'Usuarios', path: '/dashboard/settings/users' },
-  setUser: {
-    name: 'Editar usuario',
-    path: '/dashboard/settings/users/:id/edit',
-  },
+  editShift: { name: 'Editar turno', path: '/dashboard/settings/set-shift' },
   shiftsSettings: { name: 'Turnos', path: '/dashboard/settings/shifts' },
   kitchensSettings: { name: 'Cocinas', path: '/dashboard/settings/kitchens' },
+  // configuración - documentos
   documentsSettings: {
+    // table
     name: 'Documentos',
     path: '/dashboard/settings/documents',
   },
@@ -104,10 +123,11 @@ export const site: SitePaths = {
     name: 'Crear documento',
     path: '/dashboard/settings/documents/create',
   },
-  setDocument: {
+  editDocument: {
     name: 'Editar documento',
     path: '/dashboard/settings/documents/:id/edit',
   },
+  // eliminar columna de documento
   deleteDocumentField: {
     name: 'Eliminar campo de documento',
     path: '/dashboard/settings/documents/delete-field/:id?field=:field',
@@ -116,15 +136,36 @@ export const site: SitePaths = {
     name: 'Eliminar documento',
     path: '/dashboard/settings/documents/delete-item/:id?name=:name',
   },
-  data: { name: 'Datos', path: '/dashboard/data' },
-  dataTable: { name: 'Tabla', path: '/dashboard/data/table/:id' },
+  data: { name: 'Datos', path: '/dashboard/data', isPublic: true },
+  dataTable: {
+    name: 'Tabla',
+    path: '/dashboard/data/table/:id',
+    isPublic: true,
+  },
   uploadDocument: {
     name: 'Subir documento',
     path: '/dashboard/data/upload-document?id=:documentID',
   },
-  reports: { name: 'Reportes', path: '/dashboard/reports' },
+  editDocumentRecord: {
+    name: 'Editar fila de documento',
+    path: '/dashboard/data/record-detail/:id/edit?documentID=:documentID',
+  },
+  deleteDocumentRecord: {
+    name: 'Eliminar registro de documento',
+    path: '/dashboard/data/detail-record/:id/delete?documentID=:documentID',
+  },
+  reports: { name: 'Reportes', path: '/dashboard/reports', isPublic: true },
+  showReport: {
+    name: 'Ver reporte',
+    path: '/dashboard/reports/:id',
+    isPublic: true,
+  },
   changePassword: {
     name: 'Cambiar contraseña',
     path: '/dashboard/change-password',
   },
 };
+
+export const publicRoutes = Object.values(site)
+  .filter((site) => site.isPublic)
+  .map((site) => site.path);

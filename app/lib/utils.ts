@@ -282,14 +282,17 @@ export const normalizePathnameByLevel = (pathname: string, level: number) => {
   return `/${splitPathname.slice(0, level).join('/')}`;
 };
 
-export const validatedRequest = <T>(data: APIResponse<T>, defaultValue: T) => {
-  if (!data?.success || !data?.data) {
+export const validatedRequest = <T>(
+  response: APIResponse<T>,
+  defaultValue: T
+) => {
+  if (!response?.success || !response?.data) {
     if (process.env.NODE_ENV === 'development') {
-      console.error(data);
+      console.info(response);
     }
-    data.data = defaultValue;
+    response.data = defaultValue;
   }
-  return data;
+  return response;
 };
 
 // filters and paginated data

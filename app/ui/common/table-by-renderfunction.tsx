@@ -50,7 +50,7 @@ export default function TableByRenderFunction<
 
   const pagination = <Pagination totalPages={totalPages ?? 1} />;
 
-  const renderCell = useCallback(renderFunction, [renderFunction]);
+  const renderCell = useCallback(renderFunction, [renderFunction, data]);
 
   return (
     <div className="w-full">

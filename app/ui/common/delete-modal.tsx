@@ -1,6 +1,12 @@
 'use client';
 
-import { txtToHash } from '@/app/lib/utils';
+// framework
+import { useContext } from 'react';
+import { useFormStatus } from 'react-dom';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+// libs
+import { toast } from 'sonner';
 import {
   Modal,
   ModalContent,
@@ -10,39 +16,44 @@ import {
   Button,
   useDisclosure,
 } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
-import { useFormStatus } from 'react-dom';
-import { toast } from 'sonner';
 
-type DeleteAction = () => Promise<
-  | {
-      errors: Record<string, string[]>;
-      message: string;
-    }
-  | undefined
->;
+// types and utils
+import { PendingReloadContext } from '@/app/context/pending-reload';
+import { txtToHash } from '@/app/lib/utils';
+
+// components
+
+type DeleteAction = () => Promise<{
+  errors: Record<string, string[]>;
+  message: string;
+} | void>;
 
 export default function DeleleteModal({
   children,
   title,
   deleteAction,
   showDelete = true,
+  id,
 }: {
   children: React.ReactNode;
   title: string;
   deleteAction: DeleteAction;
   showDelete?: boolean;
+  id: string;
 }) {
   const { onOpenChange } = useDisclosure();
-  const router = useRouter();
+  const { back } = useRouter();
+  const searchParams = useSearchParams();
   const toastRef = txtToHash(title);
+
+  const closeModal = searchParams.get('close-modal');
 
   return (
     <Modal
       className="max-w-[500px]"
       onOpenChange={onOpenChange}
-      onClose={() => router.back()}
-      isOpen
+      onClose={() => back()}
+      isOpen={!closeModal}
     >
       <ModalContent>
         {(_onClose) => (
@@ -50,15 +61,15 @@ export default function DeleleteModal({
             <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
             <ModalBody>{children}</ModalBody>
             <ModalFooter>
-              <Button
-                color="primary"
-                variant="light"
-                onPress={() => router.back()}
-              >
+              <Button color="primary" variant="light" onPress={() => back()}>
                 Cerrar
               </Button>
               {showDelete && (
-                <DeleteAction deleteAction={deleteAction} toastRef={toastRef} />
+                <DeleteAction
+                  deleteAction={deleteAction}
+                  toastRef={toastRef}
+                  itemDeleted={id}
+                />
               )}
             </ModalFooter>
           </>
@@ -71,11 +82,13 @@ export default function DeleleteModal({
 function DeleteAction({
   deleteAction,
   toastRef,
+  itemDeleted,
 }: {
   deleteAction: DeleteAction;
   toastRef: string;
+  itemDeleted: string;
 }) {
-  const router = useRouter();
+  const { setPendingNavigationAction } = useContext(PendingReloadContext);
 
   const handleDelete = async () => {
     const state = await deleteAction();
@@ -86,7 +99,11 @@ function DeleteAction({
         id: `delete-success-${toastRef}`,
       });
     }
-    router.back();
+    setPendingNavigationAction((prevState) => ({
+      ...prevState,
+      itemDeleted,
+      back: true,
+    }));
   };
 
   return (

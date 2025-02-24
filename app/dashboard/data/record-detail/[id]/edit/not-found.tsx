@@ -1,8 +1,15 @@
 import Link from 'next/link';
 import { FaceFrownIcon } from '@heroicons/react/24/outline';
 import { Button } from '@nextui-org/react';
+import { site } from '@/app/lib/consts';
+import { serializedPathname } from '@/app/lib/utils';
 
-export default function NotFound() {
+type Props = {
+  params: Promise<{ id: string }>;
+};
+export default async function NotFound({ params }: Props) {
+  const { id } = await params;
+
   return (
     <main className="flex h-full flex-col items-center justify-center gap-2">
       <FaceFrownIcon className="w-20 text-gray-400" />
@@ -14,7 +21,7 @@ export default function NotFound() {
         color="primary"
         variant="flat"
         size="lg"
-        href="/dashboard/deposits"
+        href={serializedPathname(site.dataTable.path, { id })}
         as={Link}
       >
         Regresar

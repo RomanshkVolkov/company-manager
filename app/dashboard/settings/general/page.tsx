@@ -18,20 +18,7 @@ export const metadata: Metadata = {
   title: 'Configuración General',
 };
 
-export default async function General({
-  params,
-}: {
-  params: {
-    query?: string;
-    page?: string;
-    from?: string;
-    to?: string;
-  };
-}) {
-  // params
-  const page = params?.page ? +params.page : 1;
-  const { from, to } = params;
-
+export default async function General() {
   // consts and helper functions
   const linksToPrefetch = [
     site.createProfile.path,
@@ -59,7 +46,7 @@ export default async function General({
             label={site.createProfile.name}
           />
         </HeaderWrapper>
-        <TableWrapper page={page} date={{ from, to }} />
+        <TableWrapper />
       </div>
     </MainWrapper>
   );

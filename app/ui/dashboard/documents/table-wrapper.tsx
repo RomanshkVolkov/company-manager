@@ -1,4 +1,4 @@
-import DinamicTable from '@/app/ui/common/table';
+import DynamicTable from '@/app/ui/common/table';
 
 import { site } from '@/app/lib/consts';
 import { TableColumns } from '@/app/types/types';
@@ -32,11 +32,11 @@ export default async function TableWrapper() {
   ];
 
   return (
-    <DinamicTable
+    <DynamicTable
       columns={columns as any}
       data={data}
       cellActions={{
-        editPath: site.setDocument.path,
+        editPath: site.editDocument.path,
         deletePath: site.deleteDocument.path,
       }}
     />

@@ -8,6 +8,7 @@ export default function InputSelect({
   id,
   label,
   variant,
+  className,
   options,
   defaultValue,
   description,
@@ -18,12 +19,13 @@ export default function InputSelect({
   id: string;
   label: string;
   variant?: 'flat' | 'bordered' | 'underlined' | 'faded';
+  className?: string;
   options: Catalog[];
-  defaultValue?: string;
+  defaultValue?: Set<string>;
   description?: string;
   disabled?: boolean;
   multiple?: boolean;
-  onChange?: (_value: Catalog) => void;
+  onChange?: (_value: Catalog | string) => void;
 }) {
   return (
     <Select
@@ -31,22 +33,24 @@ export default function InputSelect({
       name={id}
       label={label}
       variant={variant}
+      className={className}
       selectionMode={multiple ? 'multiple' : 'single'}
       isDisabled={disabled}
       onChange={(e) => {
         if (onChange) {
           const { value } = e.target;
-          const item = options.find((option) => option.id === +value);
-          onChange(item!);
+
+          if (multiple) {
+            return onChange(value);
+          }
+
+          const item = options.find((option) => option.id === +value)!;
+          onChange(item);
         }
       }}
       description={description}
       defaultSelectedKeys={
-        defaultValue
-          ? Array.isArray(defaultValue)
-            ? defaultValue
-            : [defaultValue]
-          : []
+        defaultValue ? new Set([...defaultValue]) : undefined
       }
     >
       {options.map((option) => (

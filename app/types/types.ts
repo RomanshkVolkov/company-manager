@@ -102,28 +102,32 @@ type PathNamesStrings =
   | 'login'
   | 'createProfile'
   | 'editProfile'
+  | 'deleteProfile'
   | 'createKitchen'
   | 'createShift'
-  | 'setKitchen'
-  | 'setShift'
+  | 'editKitchen'
+  | 'editShift'
   | 'settingsActionRemove'
   | 'generalSettings'
   | 'usersSettings'
-  | 'setUser'
+  | 'editUser'
   | 'shiftsSettings'
   | 'kitchensSettings'
   | 'documentsSettings'
   | 'createDocument'
-  | 'setDocument'
+  | 'editDocument'
   | 'deleteDocumentField'
   | 'deleteDocument'
   | 'data'
   | 'dataTable'
   | 'uploadDocument'
+  | 'editDocumentRecord'
+  | 'deleteDocumentRecord'
   | 'reports'
+  | 'showReport'
   | 'changePassword';
 
 export type SitePaths = Record<
   PathNamesStrings,
-  { name: string; path: string }
+  { name: string; path: string; isPublic?: boolean }
 >;

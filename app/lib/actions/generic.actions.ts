@@ -9,7 +9,7 @@ import { redirect } from 'next/navigation';
 import { ActionState } from '@/app/types/types';
 import { auth } from '@/auth';
 import { apiRequest } from '@/app/lib/server-functions';
-import { commonErrors } from '@/app/lib/consts';
+import { commonErrors, httpMethod } from '@/app/lib/consts';
 import { reportErrorToSentry, validatedSchema } from '@/app/lib/utils';
 
 // components -- not used section on server or actions
@@ -52,7 +52,12 @@ export async function createAction<T>(
     }
 
     if (postRequestPaths.revalidate) {
-      revalidatePath(postRequestPaths.revalidate);
+      const bindRevalidate = revalidatePath.bind(
+        null,
+        postRequestPaths.revalidate
+      );
+      console.log('bindRevalidate', bindRevalidate);
+      bindRevalidate();
     }
     if (postRequestPaths.redirect && !omitRedirect) {
       redirect(postRequestPaths.redirect);
@@ -88,7 +93,7 @@ export async function createAction<T>(
 export async function editAction<ErrorSchema>(
   pathname: string,
   errorMessage: string,
-  revalidate: string,
+  revalidate: string[],
   data: any,
   schema: any,
   omitSchema: boolean = false
@@ -113,13 +118,6 @@ export async function editAction<ErrorSchema>(
         message: response.message.es,
       };
     }
-
-    revalidatePath(revalidate);
-    return {
-      errors: {} as ErrorSchema,
-      message: '',
-      finishedProcess: true,
-    };
   } catch (error) {
     reportErrorToSentry(error, 'Generic Actions');
     return {
@@ -127,6 +125,13 @@ export async function editAction<ErrorSchema>(
       message: errorMessage,
     };
   }
+
+  revalidate.forEach((path) => revalidatePath(path));
+  return {
+    errors: {} as ErrorSchema,
+    message: '',
+    finishedProcess: true,
+  };
 }
 
 /**
@@ -148,7 +153,7 @@ export async function deleteAction(
       return commonErrors.SESSION_NOT_FOUND;
     }
 
-    const response = await apiRequest(pathname, 'DELETE', true);
+    const response = await apiRequest(pathname, httpMethod.DELETE, true);
 
     if (!response.success) {
       return {
@@ -156,13 +161,6 @@ export async function deleteAction(
         message: response.message.es,
       };
     }
-
-    revalidatePath(revalidate);
-
-    return {
-      errors: {},
-      message: '',
-    };
   } catch (error) {
     reportErrorToSentry(error, 'Generic Actions');
     return {
@@ -170,4 +168,7 @@ export async function deleteAction(
       message: errorMessage,
     };
   }
+
+  revalidatePath(revalidate);
+  return;
 }

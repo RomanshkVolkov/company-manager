@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import TableSkeleton from '@/app/ui/common/table-skeleton';
+import TableSkeleton from '@/app/ui/skeletons/table-skeleton';
 
 type Props = {
   children: React.ReactNode;

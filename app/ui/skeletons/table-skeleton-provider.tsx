@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import TableSkeleton from '../common/table-skeleton';
+import TableSkeleton from './table-skeleton';
 
 export default function TableSkeletonProvider({
   children,

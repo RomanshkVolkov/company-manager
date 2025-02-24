@@ -18,14 +18,14 @@ export type EditableUser = {
   kitchenIDs?: string[];
 };
 
-type Permision = {
+export type Permission = {
   id: number;
   name: string;
   path: string;
-  write: boolean;
+  writing: boolean;
 };
 export type Profile = {
   id: number;
   name: string;
-  permissions: Permision[];
+  permissions: Permission[];
 };

@@ -1,9 +1,17 @@
+// framework
 import type { Metadata } from 'next';
+
+// libs
+import { Toaster } from 'sonner';
+
+// types and utils
 import { inter, quicksand } from './fonts';
+
+// components
+import PendingReloadProvider from './context/pending-reload';
 import { Providers } from './providers';
 import ThemeSwitcher from './ui/theme-switcher';
 import './globals.css';
-import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'Waste Wise',
@@ -22,7 +30,7 @@ export default function RootLayout({
       >
         <Toaster />
         <Providers>
-          {children}
+          <PendingReloadProvider>{children}</PendingReloadProvider>
           <div className="absolute bottom-2 right-2 md:bottom-6 md:right-6">
             <ThemeSwitcher />
           </div>

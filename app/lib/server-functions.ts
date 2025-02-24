@@ -23,13 +23,16 @@ export async function apiRequest<T>(
   data?: unknown,
   revalidate?: number
 ) {
+  const nextRevalidate = revalidate
+    ? { next: { revalidate, tags: [pathname] } }
+    : {};
   const reqData: RequestInit & NextFetchRequestConfig = {
     method,
     body: data ? JSON.stringify(data) : undefined,
     headers: {
       'Content-Type': 'application/json',
     } as HeadersInit,
-    revalidate: revalidate ? revalidate : false,
+    ...nextRevalidate,
   };
 
   if (bearer) {
@@ -58,6 +61,7 @@ export async function apiRequest<T>(
     return res;
   } catch (error) {
     console.error(error);
+
     reportErrorToSentry(error, 'API Request');
     return {
       success: false,

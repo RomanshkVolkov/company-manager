@@ -9,7 +9,7 @@ import { getShifts } from '@/app/lib/actions/user.actions';
 export type PickDataSource = 'id' | 'name' | 'updatedAt' | 'createdAt';
 
 // components
-import DinamicTable from '@/app/ui/common/table';
+import DynamicTable from '@/app/ui/common/table';
 import { serializedPathname } from '@/app/lib/utils';
 
 export type DataSource = {
@@ -31,11 +31,11 @@ export default async function TableWrapper() {
 
   return (
     <div className="w-full">
-      <DinamicTable
+      <DynamicTable
         columns={columns}
         data={data}
         cellActions={{
-          editPath: site.setShift.path,
+          editPath: site.editShift.path,
           deletePath: serializedPathname(site.settingsActionRemove.path, {
             slugAction: 'delete-shift',
           }),

@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { SitePaths } from '@/app/types/types';
 import { site } from '@/app/lib/consts';
 import { apiRequest } from '@/app/lib/server-functions';
+import { revalidateTag } from 'next/cache';
 
 export async function PUT(req: Request) {
   const method = req.method;
@@ -37,6 +38,8 @@ export async function PUT(req: Request) {
   if (!response.success) {
     notFound();
   }
+
+  revalidateTag('/users/permissions');
 
   return Response.json(response);
 }

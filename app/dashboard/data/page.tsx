@@ -14,22 +14,14 @@ export const metadata: Metadata = {
   title: 'Retiros',
 };
 
-export default async function Data({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    query?: string;
-    page?: string;
-  }>;
-}) {
+export default async function Data() {
   // filters and pagination
-  const { page, query } = await searchParams;
   const { data } = await getDocumentTables();
 
   return (
     <MainWrapper title="Datos">
       <div className="w-full">
-        <TableWrapper query={query || ''} page={+(page || 1)} data={data} />
+        <TableWrapper data={data} />
       </div>
     </MainWrapper>
   );

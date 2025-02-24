@@ -1,7 +1,20 @@
+// framework
+
+// libs
+
+// types and utils
 import { getDocumentTableById } from '@/app/lib/actions/document.actions';
-import { site } from '@/app/lib/consts';
+
+// components
+import DynamicTable from '@/app/ui/common/table';
 import MainWrapper from '@/app/ui/common/main-wrapper';
-import DinamicTable from '@/app/ui/common/table';
+import { site } from '@/app/lib/consts';
+import { serializedPathname } from '@/app/lib/utils';
+
+// nextjs params
+// export const revalidate = 3600;
+// export const dynamic = 'force-dynamic';
+// export const dynamicParams = true;
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -9,6 +22,8 @@ type Props = {
 export default async function Page({ params }: Props) {
   const { id } = await params;
   const { data } = await getDocumentTableById(+id);
+
+  const cols = [...data.columns, { uid: 'actions', name: 'Acciones' }];
 
   const createLink = site.uploadDocument.path.replace(':documentID', id);
   const linksToPrefetch = [createLink];
@@ -27,7 +42,18 @@ export default async function Page({ params }: Props) {
       linksToPrefetch={linksToPrefetch}
     >
       <div className="w-full">
-        <DinamicTable columns={data.columns as any} data={data.table} />
+        <DynamicTable
+          columns={cols as any}
+          data={data.table}
+          cellActions={{
+            editPath: serializedPathname(site.editDocumentRecord.path, {
+              documentID: data.document.id,
+            }),
+            deletePath: serializedPathname(site.deleteDocumentRecord.path, {
+              documentID: data.document.id,
+            }),
+          }}
+        />
       </div>
     </MainWrapper>
   );

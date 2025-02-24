@@ -21,9 +21,16 @@ export type EditableDocumentWithFields = Record<DocumentStrings, string> & {
   fields: DocumentFields[];
 };
 
-// Reports
+// data
 export type TableByID = {
   document: Catalog;
   table: any[];
   columns: TableProps<any>['columns'][];
+};
+
+// reports
+export type ReportByID = {
+  report: Catalog;
+  table: any[];
+  columns: TableProps<any>['columns'];
 };

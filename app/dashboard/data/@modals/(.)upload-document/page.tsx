@@ -3,9 +3,9 @@
 // libs
 
 // types and utils
+import { getDocumentById } from '@/app/lib/actions/document.actions';
 
 // components
-import { getDocumentById } from '@/app/lib/actions/document.actions';
 import CustomModal from '@/app/ui/common/custom-modal';
 import UploadForm from '@/app/ui/dashboard/data/upload-form';
 

@@ -1,10 +1,12 @@
 'use client';
 
 // framework
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 
 // libs
 import {
+  Button,
+  Link,
   Table,
   TableBody,
   TableCell,
@@ -28,8 +30,10 @@ import {
 } from '@/app/lib/utils';
 import TableColumnActions from './table-column-actions';
 import { useSearchParams } from 'next/navigation';
+import { PendingReloadContext } from '@/app/context/pending-reload';
+import { EyeIcon } from '@heroicons/react/24/outline';
 
-export default function DinamicTable<
+export default function DynamicTable<
   PickDataSource extends string,
   DataSource = any,
 >({
@@ -39,9 +43,18 @@ export default function DinamicTable<
   filters,
   limitRecordsPerPage = 15,
 }: TableProps<DataSource & { id: string | number }>) {
+  const { isPendingNavigationAction } = useContext(PendingReloadContext);
   const searchParams = useSearchParams();
   const search = searchParams.get('search') || '';
   const page = searchParams.get('page') ?? '1';
+
+  useEffect(() => {
+    if (isPendingNavigationAction.itemDeleted) {
+      const id = +isPendingNavigationAction.itemDeleted;
+      const newData = data.filter((item) => item.id !== id);
+      setDataFiltered(newData);
+    }
+  }, [data, isPendingNavigationAction]);
 
   const [dataFiltered, setDataFiltered] =
     React.useState<(DataSource & { id: number | string })[]>(data);
@@ -86,6 +99,21 @@ export default function DinamicTable<
         name,
       });
       return <TableColumnActions editPath={editPath} deletePath={deletePath} />;
+    }
+
+    if (columnKey === 'link') {
+      return (
+        <Button
+          href={serializedPathname((item as any).link, {
+            id: (item as any).id,
+          })}
+          size="sm"
+          as={Link}
+          isIconOnly
+        >
+          <EyeIcon width={24} height={24} />
+        </Button>
+      );
     }
 
     const value = item[columnKey as any as keyof DataSource];

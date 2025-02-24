@@ -13,29 +13,30 @@ import {
   Brush,
 } from 'recharts';
 
-export default function DailyTransactionsLineChart({ data }: { data: any[] }) {
+type Props = {
+  xAxisKey: string;
+  data: any[];
+  lines: { dataKey: string; stroke: string; name: string }[];
+};
+export default function SimpleLineChart({ xAxisKey, data, lines }: Props) {
   return (
     <ResponsiveContainer width="100%" height={500}>
       <LineChart data={data}>
         <Brush />
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
+        <XAxis dataKey={xAxisKey} />
         <YAxis />
         <Tooltip formatter={(value, name) => [formatToPrice(+value), name]} />
         <Legend />
-        <Line type="monotone" dataKey="sales" stroke="#8884d8" name="Ventas" />
-        <Line
-          type="monotone"
-          dataKey="commission"
-          stroke="#82ca9d"
-          name="Comisión"
-        />
-        <Line
-          type="monotone"
-          dataKey="totalDeposits"
-          stroke="#ff7300"
-          name="Retiros"
-        />
+        {lines.map((line) => (
+          <Line
+            key={line.dataKey}
+            type="monotone"
+            dataKey={line.dataKey}
+            stroke={line.stroke}
+            name={line.name}
+          />
+        ))}
       </LineChart>
     </ResponsiveContainer>
   );

@@ -1,7 +1,7 @@
 import { site } from '@/app/lib/consts';
 import { TableColumns } from '@/app/types/types';
 import { getUsers } from '@/app/lib/actions/user.actions';
-import DinamicTable from '../../common/table';
+import DynamicTable from '../../common/table';
 import { serializedPathname } from '@/app/lib/utils';
 
 export type PickDataSource =
@@ -39,11 +39,11 @@ export default async function TableWrapper() {
 
   return (
     <div className="w-full">
-      <DinamicTable
+      <DynamicTable
         columns={columns}
         data={data}
         cellActions={{
-          editPath: site.setUser.path,
+          editPath: site.editUser.path,
           deletePath: serializedPathname(site.settingsActionRemove.path, {
             slugAction: 'delete-user',
           }),

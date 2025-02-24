@@ -1,21 +1,28 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
+
+import { ActionState, Catalog, GormModel } from '@/app/types/types';
+import { CatalogSchema } from '../schemas/catalog.schema';
+import {
+  EditableUser,
+  Permission,
+  Profile,
+  UsersTable,
+} from '@/app/types/user';
+import { Errors } from '../schemas/user.schema';
 import {
   conditionalParse,
   debugError,
   reportErrorToSentry,
+  serializedPathname,
   validatedRequest,
   validatedSchema,
 } from '../utils';
-import { Errors } from '../schemas/user.schema';
 import { apiRequest } from '../server-functions';
-import { CatalogSchema } from '../schemas/catalog.schema';
-import { ActionState, Catalog, GormModel } from '@/app/types/types';
-import { site } from '../consts';
-import { deleteAction, editAction } from './generic.actions';
-import { EditableUser, Profile, UsersTable } from '@/app/types/user';
+import { publicRoutes, site } from '../consts';
+import { createAction, deleteAction, editAction } from './generic.actions';
 
 export async function getUsers() {
   const response = await apiRequest<UsersTable[]>(
@@ -66,12 +73,87 @@ export async function getProfiles() {
 
 export async function getProfileByID(id: number) {
   const response = await apiRequest<Profile>(
-    `/catalogs/profile/${id}`,
+    `/users/profile/${id}`,
     'GET',
     true
   );
 
   return validatedRequest(response, { id: 0, name: '', permissions: [] });
+}
+
+export async function createProfile(
+  permissions: Permission[],
+  prevState: any,
+  formData: FormData
+) {
+  const data = Object.fromEntries(formData);
+  const body = {
+    name: data.name,
+    permissions: permissions.map((p) => ({
+      id: p.id,
+      writing: p.writing,
+    })),
+  };
+
+  return await createAction(
+    '/users/profile',
+    'Hubo un problema al crear el perfil',
+    {
+      revalidate: site.generalSettings.path,
+    },
+    body
+  );
+}
+
+export async function editProfile(
+  id: number,
+  permissions: Permission[],
+  prevState: any,
+  formData: FormData
+) {
+  const data = Object.fromEntries(formData);
+
+  const body = {
+    id,
+    name: data.name,
+    permissions: permissions.map((p) => ({
+      id: p.id,
+      writing: p.writing,
+    })),
+  };
+
+  return await editAction(
+    '/users/profile',
+    'Hubo un problema al editar el perfil',
+    [
+      site.generalSettings.path,
+      serializedPathname(site.editProfile.path, { id }),
+    ],
+    body,
+    undefined,
+    true
+  );
+}
+
+export async function deleteProfile(id: number) {
+  const pathname = `/users/profile/${id}`;
+  const errorMessage = 'Hubo un problema al eliminar el perfil';
+  return await deleteAction(pathname, errorMessage, site.generalSettings.path);
+}
+
+export async function getPermisssions() {
+  const response = await apiRequest<Permission[]>(
+    '/users/permissions',
+    'GET',
+    true,
+    undefined,
+    1200
+  );
+
+  const data = response.data?.filter((p) => !publicRoutes.includes(p.path));
+  response.data = data;
+
+  return validatedRequest(response, []);
 }
 
 export async function getShifts() {
@@ -286,7 +368,7 @@ export async function editShiftAction(
   return await editAction(
     pathname,
     errorMessage,
-    site.shiftsSettings.path,
+    [site.shiftsSettings.path, site.usersSettings.path],
     {
       id,
       name: data.name,
@@ -307,7 +389,7 @@ export async function editKitchenAction<T>(
   return (await editAction(
     pathname,
     errorMessage,
-    site.kitchensSettings.path,
+    [site.kitchensSettings.path, site.usersSettings.path],
     {
       id,
       name: data.name,
@@ -326,23 +408,4 @@ export async function deleteShiftAction(id: number) {
   const pathname = `/catalogs/shift/${id}`;
   const errorMessage = 'Hubo un problema al eliminar el turno';
   return await deleteAction(pathname, errorMessage, site.shiftsSettings.path);
-}
-
-export async function createProfile(prevState: any, formData: FormData) {
-  const data = Object.fromEntries(formData);
-
-  const response = await apiRequest('/users/profiles', 'POST', true, {
-    name: data.name,
-  });
-
-  if (!response.success) {
-    return {
-      errors: response.schema,
-      message: response.message.es,
-    };
-  }
-
-  const path = '/dashboard/settings/users/create';
-  revalidatePath(path);
-  redirect(path);
 }

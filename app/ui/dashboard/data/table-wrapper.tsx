@@ -1,15 +1,20 @@
 'use client';
 
-import { site } from '@/app/lib/consts';
-import { CommonFields, TableColumns } from '@/app/types/types';
-import TableByRenderFunction from '../../common/table-by-renderfunction';
-import { normalizeDate, serializedPathname } from '@/app/lib/utils';
-import { Link, Tooltip } from '@nextui-org/react';
+// framework
+
+// libs
 import { EyeIcon } from '@heroicons/react/24/outline';
+import { Link, Tooltip } from '@nextui-org/react';
 
+// types and utils
+import { CommonFields, TableColumns } from '@/app/types/types';
+import { site } from '@/app/lib/consts';
+import { normalizeDate, serializedPathname } from '@/app/lib/utils';
 export type PickDataSource = 'id' | 'name' | 'createdAt' | 'updatedAt';
-
 export type DataSource = Record<PickDataSource, string>;
+
+// components
+import TableByRenderFunction from '@/app/ui/common/table-by-renderfunction';
 
 type Props = {
   data: CommonFields[];

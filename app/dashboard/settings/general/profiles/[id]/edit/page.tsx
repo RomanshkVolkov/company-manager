@@ -1,6 +1,11 @@
-import { getProfileByID } from '@/app/lib/actions/user.actions';
+import {
+  getPermisssions,
+  getProfileByID,
+} from '@/app/lib/actions/user.actions';
+import { site } from '@/app/lib/consts';
+import { serializedPathname } from '@/app/lib/utils';
 import MainWrapper from '@/app/ui/common/main-wrapper';
-import EditFormProfile from '@/app/ui/dashboard/users/profiles/edit-form';
+import EditProfileForm from '@/app/ui/dashboard/users/profiles/edit-form';
 
 type Props = {
   params: Promise<{
@@ -10,10 +15,25 @@ type Props = {
 export default async function Page({ params }: Props) {
   const { id } = await params;
   const profile = await getProfileByID(+id);
+  const permissions = await getPermisssions();
+
   return (
-    <MainWrapper title="Profile">
+    <MainWrapper
+      title="Profile"
+      breadcrumbList={[
+        { label: site.generalSettings.name, href: site.generalSettings.path },
+        {
+          label: site.editProfile.name,
+          href: serializedPathname(site.editProfile.path, { id }),
+          active: true,
+        },
+      ]}
+    >
       <div className="w-full">
-        <EditFormProfile profile={profile.data} />
+        <EditProfileForm
+          profile={profile.data}
+          permissions={permissions.data}
+        />
       </div>
     </MainWrapper>
   );

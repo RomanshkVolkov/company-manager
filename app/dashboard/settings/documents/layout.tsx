@@ -1,4 +1,4 @@
-import TableSkeleton from '@/app/ui/common/table-skeleton';
+import TableSkeleton from '@/app/ui/skeletons/table-skeleton';
 import { Suspense } from 'react';
 
 export default function Layout({

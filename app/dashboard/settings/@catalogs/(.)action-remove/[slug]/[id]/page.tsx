@@ -1,5 +1,5 @@
 import DeleleteModal from '@/app/ui/common/delete-modal';
-import { modalsData } from '@/app/dashboard/@delete/modals-data';
+import { modalsData } from '@/app/lib/modals-data';
 import { notFound } from 'next/navigation';
 
 export default async function Page({
@@ -34,6 +34,7 @@ export default async function Page({
         'use server';
         return await action(+id);
       }}
+      id={id}
     >
       <p>{message.replace('{{name}}', `"${queryParams?.name}"`)}</p>
     </DeleleteModal>

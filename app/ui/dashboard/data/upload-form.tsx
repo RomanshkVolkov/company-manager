@@ -13,7 +13,7 @@ import { APIResponse, TableColumns } from '@/app/types/types';
 import { uploadDocument } from '@/app/lib/actions/document.actions';
 
 // components
-import DinamicTable from '@/app/ui/common/table';
+import DynamicTable from '@/app/ui/common/table';
 import Fields from '@/app/ui/common/fields';
 import File from '@/app/ui/common/file';
 import FormGroup from '@/app/ui/common/form-group';
@@ -61,7 +61,7 @@ export default function UploadForm({ document }: Props) {
     <div className="min-h-[324px] w-full">
       <h2 className="mb-2 text-2xl font-bold">Detalles del archivo</h2>
       <div className="w-full gap-4">
-        <DinamicTable
+        <DynamicTable
           columns={detailsTabColumns}
           data={document.data.fields}
           totalPages={detailsTabPages}
